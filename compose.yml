@@ -1,0 +1,53 @@
+services:
+  fast-docs:
+    build:
+      context: /fast-docs
+      dockerfile: /Dockerfile
+    container_name: fast-docs
+    ports:
+      - 8080:8080
+    networks:
+      backend:
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: best_password
+    ports:
+      - 27017:27017
+    volumes:
+      - database-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')", "admin"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      backend:
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: best_password
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+    networks:
+      backend:
+
+
+networks:
+  backend:
+
+
+volumes:
+  database-data:
