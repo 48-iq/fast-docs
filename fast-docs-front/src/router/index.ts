@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import EditorView from '../views/EditorView.vue'
 import DocumentsView from '../views/DocumentsView.vue'
 import TemplatesView from '../views/TemplatesView.vue'
 
@@ -12,14 +13,14 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/documents',
+      path: '/editor/documents',
       name: 'documents',
-      component: DocumentsView,
+      component: EditorView,
     },
     {
-      path: '/templates',
+      path: '/editor/templates',
       name: 'templates',
-      component: TemplatesView,
+      component: EditorView,
     },
     {
       path: '/:catchAll(.*)',

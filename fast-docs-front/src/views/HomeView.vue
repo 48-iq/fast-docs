@@ -2,10 +2,10 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const navigateToTemplates = () => {
-  router.push('/templates');
+  router.push('/editor/templates');
 };
 const navigateToDocuments = () => {
-  router.push('/documents');
+  router.push('/editor/documents');
 };
 </script>
 
