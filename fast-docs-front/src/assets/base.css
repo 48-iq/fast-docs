@@ -1,10 +1,12 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Roboto+Slab:wght@100..900&display=swap');
+
 :root {
-  --color-dark-blue-gray: #002048;
-  --color-blue-gray: #3f5a7d;;
-  --color-gray: #8d9fb8;
-  --color-light-gray: #e0eaf7;
+  --color-blue: #3f5a7d;
+  --color-dark-blue: #041a28;
+  --color-aqua: #55a3a3;
+  --color-dark-aqua: rgb(21, 58, 64);
+  --color-light-aqua: #def3f1;
+  --color-light-gray: #ecf1f2;
   --color-white: #ffffff;
 }
 
@@ -12,9 +14,14 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
-  font-weight: weight;
+  font-weight: 600;
   font-style: normal;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  justify-content: center;
 }
