@@ -36,7 +36,7 @@ const navigateToDocuments = () => {
   align-items: center;
 }
 
-#div_logo{
+#div_logo {
   display: flex;
   margin: 0 auto;
   gap: 10px;

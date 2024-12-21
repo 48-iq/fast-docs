@@ -1,87 +1,139 @@
+<!-- npm install vuedraggable@next -->
+
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import draggable from 'vuedraggable';
+
+// Тип для элементов
+interface Element {
+    id: number;
+    name: string;
+    value?: string;
+    order?: number | null;
+}
+
+// Список доступных элементов
+const availableElements = ref<Element[]>([
+    { id: 1, name: 'Текстовое поле', value: "BE!" },
+    { id: 2, name: 'Текстовый блок', value: "MEW!" },
+]);
 
 // Тип для Шаблонов и Документов
 interface Item {
     id: number;
     name: string;
-    // Поменять string на тип для элементов
-    elements: string[];
+    elements: Element[];
 }
 
+// Список всех Шаблонов
 let templates = ref<Item[]>([
-    { id: 1, name: 'Шаблон 1', elements: ['Текстовое поле', 'Текстовый блок'] },
-    { id: 2, name: 'Шаблон 2', elements: [] },
+    { id: 1, name: 'Шаблон 1', elements: [availableElements.value[0], availableElements.value[1]] },
+    { id: 2, name: 'Шаблон 2', elements: [availableElements.value[0]] },
 ]);
 
+// Список всех Документов
 let documents = ref<Item[]>([
-    { id: 1, name: 'Документ 1', elements: [] },
-    { id: 2, name: 'Документ 2', elements: ['Текстовое поле'] },
+    { id: 1, name: 'Документ 1', elements: [availableElements.value[1], availableElements.value[0], availableElements.value[1]] },
+    { id: 2, name: 'Документ 2', elements: [availableElements.value[0], availableElements.value[1]] },
 ]);
 
 // Определение текущего списка и выбранного элемента
-const isTemplates = ref(true);
+const route = useRoute();
+const isTemplates = ref(route.path === '/editor/templates');
 let currentList = computed(() => (isTemplates.value ? templates.value : documents.value));
 let selectedItem = ref<Item | null>(null);
 
-// Список доступных элементов
-let availableElements = ref<string[]>(['Текстовое поле', 'Текстовый блок']);
-
 // Методы
+const router = useRouter();
+
+// Смена списка на Шаблоны
 const showTemplates = () => {
     isTemplates.value = true;
     selectedItem.value = null;
+    router.push('/editor/templates');
 };
 
+// Смена списка на Документы
 const showDocuments = () => {
     isTemplates.value = false;
     selectedItem.value = null;
+    router.push('/editor/documents');
 };
 
+// Выбор элемента для окна редактора
 const openItem = (item: Item) => {
-    selectedItem.value = { ...item }; // Копия объекта для редактирования
+    selectedItem.value = { ...item }; // Копируем
 };
 
-const deleteItem = (id: number) => {
-    const list = isTemplates.value ? templates.value : documents.value;
-    const index = list.findIndex((item) => item.id === id);
-    if (index !== -1) list.splice(index, 1);
-};
-
+// Добавление элемента в список
 const addNewItem = () => {
     const list = isTemplates.value ? templates.value : documents.value;
     let id = list.reduce((acc, curr) => acc.id > curr.id ? acc : curr).id + 1;
-    const newItem: Item = { id: id, name: 'Безымянный', elements: [] };
+    const newItem: Item = { id: id, name: `Безымянный ${id}`, elements: [] };
 
     list.push(newItem);
     openItem(newItem);
 };
 
-const saveItem = () => {
+// Удаление элемента из списка
+let showDeleteConfirmation = ref(false);
+let idItemToDelete = ref<number | null>(null);
+
+const confirmDelete = (id: number) => {
+    idItemToDelete.value = id;
+    showDeleteConfirmation.value = true;
+};
+
+const deleteItemConfirmed = () => {
+    if (idItemToDelete.value !== null) {
+        const list = isTemplates.value ? templates.value : documents.value;
+        const index = list.findIndex((item) => item.id === idItemToDelete.value);
+        if (index !== -1) list.splice(index, 1);
+        idItemToDelete.value = null;
+    }
+    selectedItem.value = null;
+    showDeleteConfirmation.value = false;
+};
+
+const cancelDelete = () => {
+    idItemToDelete.value = null;
+    showDeleteConfirmation.value = false;
+};
+
+// Сохранение элемента, существующего в списке
+let showSaveConfirmation = ref(false);
+let newItemName = ref('Новый');
+
+const confirmSave = () => {
+    showSaveConfirmation.value = true;
+};
+
+const saveItemConfirmed = () => {
     if (!selectedItem.value) return;
 
     const list = isTemplates.value ? templates.value : documents.value;
     const index = list.findIndex((item) => item.id === selectedItem.value?.id);
     if (index !== -1) {
-        list[index] = { ...selectedItem.value };
+        list[index] = { ...selectedItem.value, name: newItemName.value };
     }
-    alert('Изменения сохранены');
+    selectedItem.value = list[index];
+    showSaveConfirmation.value = false;
 };
 
-const cancelChanges = () => {
-    selectedItem.value = null;
+const cancelSave = () => {
+    showSaveConfirmation.value = false;
 };
 
-const updateElements = (newElements: string[]) => {
+// Функции для элементов
+const cloneElement = (element: Element) => {
+    return { ...element };
+};
+
+const updateElements = (newElements: Element[]) => {
     if (selectedItem.value) {
         selectedItem.value.elements = newElements; // Обновляем элементы
     }
-};
-
-// Реакция на перетаскивание
-const onDrop = () => {
-    console.log('Элемент добавлен');
 };
 </script>
 
@@ -99,11 +151,11 @@ const onDrop = () => {
             <!-- Список шаблонов или документов -->
             <div class="sidebar">
                 <div class="list">
-                    <h3>{{ isTemplates ? 'Все Шаблоны' : 'Все Документы' }}</h3>
+                    <h3>{{ isTemplates ? 'Список шаблонов' : 'Список документов' }}</h3>
                     <ul>
                         <li v-for="item in currentList" :key="item.id">
                             <span @click="openItem(item)">{{ item.name }}</span>
-                            <button @click="deleteItem(item.id)">Удалить</button>
+                            <button @click="confirmDelete(item.id)">Удалить</button>
                         </li>
                     </ul>
                 </div>
@@ -113,37 +165,55 @@ const onDrop = () => {
                 <!-- Список элементов для перетаскивания -->
                 <div class="element_picker">
                     <h3>Элементы:</h3>
-                    <!-- <draggable :list="availableElements" group="elements" class="elements-picker" clone>
-                    <template #item="{ element }">
-                        <div>
-                            {{ element }}
-                        </div>
-                    </template>
-                </draggable> -->
+                    <draggable v-if="availableElements" v-model="availableElements" group="elements" :animation="300"
+                        class="list_elements" @clone="cloneElement">
+                        <template #item="{ element }">
+                            <div class="element">
+                                {{ element.name }}
+                            </div>
+                        </template>
+                    </draggable>
                 </div>
 
                 <!-- Поле редактирования -->
                 <div class="main">
                     <h2>{{ selectedItem ? selectedItem.name : 'Выберите элемент для редактирования...' }}</h2>
-                    <div class="template-editor">
-                        <!-- <draggable v-if="selectedItem" v-model="selectedItem.elements" class="elements-list" group="elements"
-                        @end="onDrop" @update:modelValue="updateElements">
-                        <template #item="{ element }">
-                            <div class="template-element">
-                                {{ element }}
-                            </div>
-                        </template>
-                    </draggable> -->
+                    <div class="template_editor">
+                        <draggable v-if="selectedItem" v-model="selectedItem.elements" group="itemElements" :animation="300"
+                            class="list_elements" @update:modelValue="updateElements">
+                            <template #item="{ element }">
+                                <div class="element">
+                                    {{ element.name }}
+                                </div>
+                            </template>
+                        </draggable>
                     </div>
                 </div>
                 <!-- Кнопка сохранения -->
                 <div class="footer">
-                    <button @click="saveItem" :disabled="!selectedItem">Сохранить</button>
+                    <button @click="confirmSave" :disabled="!selectedItem">Сохранить</button>
                 </div>
             </div>
         </div>
+    </div>
 
+    <!-- Окно для подтверждения удаления -->
+    <div class="popup" v-if="showDeleteConfirmation">
+        <form @submit.prevent>
+            <p>Вы уверены, что хотите удалить этот файл?</p>
+            <input type="button" value="Да" @click="deleteItemConfirmed" />
+            <input type="button" value="Нет" @click="cancelDelete" />
+        </form>
+    </div>
 
+    <!-- Окно для подтверждения сохранения -->
+    <div class="popup" v-if="showSaveConfirmation">
+        <form @submit.prevent>
+            <p>Введите имя для сохранения:</p>
+            <input type="text" v-model="newItemName" />
+            <input type="button" value="Сохранить" @click="saveItemConfirmed" />
+            <input type="button" value="Отмена" @click="cancelSave" />
+        </form>
     </div>
 </template>
 
@@ -286,6 +356,20 @@ const onDrop = () => {
     color: var(--color-dark-blue);
 }
 
+.list_elements {
+    min-height: 50px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.element {
+    background-color: #f0f0f0;
+    padding: 5px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+}
+
 .footer {
     width: -webkit-fill-available;
     position: absolute;
@@ -295,5 +379,49 @@ const onDrop = () => {
     padding: 15px;
     background-color: var(--color-light-gray);
     border-top-left-radius: 15px;
+}
+
+.popup {
+    position: absolute;
+    opacity: 1;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    height: 200px;
+    padding: 35px;
+    background-color: var(--color-light-aqua);
+    box-shadow: 0 5px 10px rgb(70 74 77 / 20%);
+    border: none;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 25px;
+    color: var(--color-blue);
+}
+
+.popup input {
+    margin: 5px;
+    border: none;
+    font-size: 18px;
+    padding: 5px 15px;
+    border-radius: 10px;
+    color: var(--color-dark-aqua);
+    transition: .2s linear;
+    outline: none;
+}
+
+.popup input:focus {
+    border: none;
+}
+
+.popup input[type="submit"] {
+    width: 125px;
+    background: var(--color-aqua);
+    color: var(--color-white);
+}
+
+.popup input[type="submit"]:hover {
+    box-shadow: 0px -6px 0 var(--color-dark-aqua) inset;
 }
 </style>
