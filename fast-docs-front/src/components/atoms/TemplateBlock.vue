@@ -45,9 +45,9 @@ useDraggable(templateBlockRef, {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-left: 4px;
     font-size: 17px;
     border-radius: 10px;
     border: 3px solid var(--color-aqua);
+    text-align: center;
   }
 </style>

@@ -72,6 +72,7 @@ import { ref, useTemplateRef } from 'vue'
     justify-content: center;
     align-items: left;
     padding-left: 10px;
+    color: var(--color-dark-blue);
   }
 
 

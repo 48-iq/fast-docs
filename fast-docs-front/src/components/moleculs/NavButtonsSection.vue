@@ -19,7 +19,7 @@ const editorNavStore = useEditorNavStore();
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 45px;
+    height: 55px;
     width: 100%;
     background-color: var(--color-blue);
   }
