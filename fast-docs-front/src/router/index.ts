@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import EditorView from '../views/EditorView.vue'
+import FixedEditorView from '@/views/FixedEditorView.vue'
+import CreateTemplateView from '@/views/CreateTemplateView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,9 +23,21 @@ const router = createRouter({
       component: EditorView,
     },
     {
+      path:'/fixed-view',
+      name:'fixed-view',
+      component: FixedEditorView,
+      children: [
+        {
+          path: 'create-template',
+          name: 'create-template',
+          component: CreateTemplateView
+        }
+      ]
+    },
+    {
       path: '/:catchAll(.*)',
       redirect: '/',
-    }
+    },
   ],
 })
 
