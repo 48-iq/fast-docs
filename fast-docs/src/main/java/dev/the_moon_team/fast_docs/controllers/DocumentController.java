@@ -1,48 +1,92 @@
 package dev.the_moon_team.fast_docs.controllers;
 
+import dev.the_moon_team.fast_docs.dto.DocumentDto;
 import dev.the_moon_team.fast_docs.entities.Document;
 import dev.the_moon_team.fast_docs.repositories.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.print.Doc;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Controller
+@RestController
+@RequestMapping("/api/documents")
 public class DocumentController {
     @Autowired
     DocumentRepository documentRepository;
 
-    @GetMapping("")
-    public List<Document> read(){
-        return documentRepository.findAll();
+    @GetMapping("/all")
+    public ResponseEntity<?> read(){
+        List<DocumentDto> documentDtos = new ArrayList<>();
+
+        List<Document> documents = documentRepository.findAll();
+
+        for (Document document: documents){
+            DocumentDto dto = new DocumentDto();
+            dto.id = document.getId();
+            dto.documentBlocks = document.getDocumentBlocks();
+            dto.title = document.getTitle();
+            dto.template = document.getTemplate();
+
+            documentDtos.add(dto);
+        }
+        return new ResponseEntity<>(documentDtos, HttpStatus.OK);
     }
-    @GetMapping("")
-    public Document readById(String id){
-        return documentRepository.findById(id).orElseThrow(() -> new NoSuchElementException("no such document"));
-    }
-    @PostMapping("") //что-то там
-    public String save(Document document){
-        documentRepository.save(document);
-        return ""; //что-то там
+    @GetMapping("/byid")
+    public ResponseEntity<?> readById(String id){
+        Document document = documentRepository.findById(id).get();
+
+        DocumentDto dto = new DocumentDto();
+        dto.id = document.getId();
+        dto.documentBlocks = document.getDocumentBlocks();
+        dto.title = document.getTitle();
+        dto.template = document.getTemplate();
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @PostMapping("")
-    public String update(Document newDocument, String id){
-        documentRepository.findById(id)
+    @PostMapping("/save") //что-то там
+    public ResponseEntity<?> save(DocumentDto documentDto){
+        Document document = new Document();
+
+        document.setTitle(documentDto.title);
+        document.setTemplate(documentDto.template);
+        document.setDocumentBlocks(documentDto.documentBlocks);
+
+        documentRepository.save(document);
+        return new ResponseEntity<>(HttpStatus.OK); //что-то там
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> update(DocumentDto documentDto, String id){
+        Document doc = documentRepository.findById(id)
                         .map(document -> {
-                            document.setTitle(newDocument.getTitle());
-                            document.setTemplate(newDocument.getTemplate());
-                            document.setDocumentBlocks(newDocument.getDocumentBlocks());
+                            document.setTitle(documentDto.title);
+                            document.setTemplate(documentDto.template);
+                            document.setDocumentBlocks(documentDto.documentBlocks);
                             return document;
                         }).orElseThrow(() -> new NoSuchElementException("no such document"));
-        return "";
+
+
+        DocumentDto dto = new DocumentDto();
+        dto.id = doc.getId();
+        dto.documentBlocks = doc.getDocumentBlocks();
+        dto.title = doc.getTitle();
+        dto.template = doc.getTemplate();
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
-    @PostMapping("")
-    public String delete(String id){
+    @PostMapping("/delete")
+    public ResponseEntity<?> delete(String id){
         documentRepository.deleteById(id);
-        return "";
+        return new ResponseEntity<>(HttpStatus.OK); //что-то там
+
     }
 }
