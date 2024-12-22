@@ -24,5 +24,6 @@
     background-color: var(--color-white);
     border-radius: 10px;
     box-shadow: 0 5px 10px rgb(70 74 77 / 20%);
+    z-index: 5;
   }
 </style>

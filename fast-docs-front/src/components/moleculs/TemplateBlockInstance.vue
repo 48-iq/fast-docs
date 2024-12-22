@@ -57,6 +57,8 @@ import { useTemplateRef } from 'vue';
     height: 100%;
     resize: none;
     overflow: hidden;
+    padding: 5px;
+    border: 2px dashed var(--color-dark-aqua);
   }
   .move-handle {
     position: absolute;

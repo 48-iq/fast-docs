@@ -30,4 +30,5 @@ const editorNavStore = useEditorNavStore();
     margin: 10px;
     width: 200px;
   }
+  
 </style>
