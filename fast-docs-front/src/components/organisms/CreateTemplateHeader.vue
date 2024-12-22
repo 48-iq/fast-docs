@@ -7,9 +7,9 @@ import TemplateBlock from '../atoms/TemplateBlock.vue';
 
 <template>
   <div class="create-template-header">
-    <TemplateBlock>Статичный текст</TemplateBlock>
-    <TemplateBlock>Текстовое поле</TemplateBlock>
-    <TemplateBlock>Числовое поле</TemplateBlock>
+    <TemplateBlock block-type="text">Статичный текст</TemplateBlock>
+    <TemplateBlock block-type="input">Текстовое поле</TemplateBlock>
+    <TemplateBlock block-type="number">Числовое поле</TemplateBlock>
   </div>
 </template>
 <style scoped>

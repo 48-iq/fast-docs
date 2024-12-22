@@ -18,6 +18,7 @@ onMounted(() => {
     <TemplateBlockInstance v-for="block in store.blocks"
     :key="block.id"
     :id="block.id"
+    :block-type="block.blockType"
     :x="block.x"
     :y="block.y"
     :width="block.width"
