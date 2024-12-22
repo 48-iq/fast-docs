@@ -1,9 +1,6 @@
 package dev.the_moon_team.fast_docs.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
@@ -20,4 +17,7 @@ public class TemplateBlock implements Serializable {
     private String id;
     private String defaultValue;
     private String type;
+    @ManyToOne
+    @JoinColumn(name = "template_id", referencedColumnName = "id")
+    private Template template;
 }

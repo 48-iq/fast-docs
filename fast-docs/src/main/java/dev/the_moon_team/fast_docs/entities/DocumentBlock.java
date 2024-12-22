@@ -1,6 +1,7 @@
 package dev.the_moon_team.fast_docs.entities;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Id;
 import lombok.*;
 
 @Entity

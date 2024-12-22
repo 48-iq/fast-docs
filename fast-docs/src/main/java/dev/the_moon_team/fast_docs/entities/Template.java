@@ -19,8 +19,8 @@ public class Template {
     @Id
     private String id;
     private String title;
-    @OneToMany(mappedBy = "document")
+    @OneToMany(mappedBy = "template")
     private List<Document> documents;
-    @OneToMany(mappedBy = "template_blocks")
+    @OneToMany(mappedBy = "template")
     private List<TemplateBlock> blocks;
 }
