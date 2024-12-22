@@ -38,7 +38,7 @@ const submit = (e: Event) => {
 
       </div>
       <div class="input-div">
-        <span>высота:</span>
+        <span>значение:</span>
         <BaseInput v-model="optionsStore.block.value" class="input" type="text"/>
 
       </div>
