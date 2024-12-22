@@ -9,7 +9,7 @@ import { ref, useTemplateRef } from 'vue'
     title: string
   }
   export type TemplateListElementProps = {
-    element: Document
+    element: Template
   }
 
   const optionsParams = ref({

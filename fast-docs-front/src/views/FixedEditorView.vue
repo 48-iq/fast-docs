@@ -23,6 +23,9 @@ import EditorNav from '@/components/organisms/EditorNav.vue';
     height: 100vh;
   }
   .content {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    height: 100vh;
   }
 </style>

@@ -33,7 +33,7 @@ const documents = ref([
 <template>
   <div class="document-list">
     <div class="title">
-      <h3>Документы</h3>
+      <h3 class="h3">Документы</h3>
     </div>
     <ul class="list">
       <li v-for="document in documents" :key="document.id">
@@ -46,6 +46,9 @@ const documents = ref([
 
 
 <style scoped>
+  .h3 {
+    margin-top: 8px;
+  }
   .document-list {
     display: flex;
     flex-direction: column;

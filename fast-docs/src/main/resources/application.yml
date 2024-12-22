@@ -1,1 +1,9 @@
-spring.application.name=fast-docs
+spring:
+  application.name: fast-docs
+  datasource.url: jdbc:postgresql://postgres:5432/fast_docs
+  datasource.username: postgres
+  datasource.password: best_password
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update

@@ -21,7 +21,7 @@ const templates = ref([
 <template>
   <div class="template-list">
     <div class="title">
-      <h3>Шаблоны</h3>
+      <h3 class="h3">Шаблоны</h3>
     </div>
     <ul class="list">
       <li v-for="template in templates" :key="template.id">
@@ -49,5 +49,8 @@ const templates = ref([
   .title {
     color: var(--color-blue);
     font-size: 20px;
+  }
+  .h3 {
+    margin-top: 8px;
   }
 </style>
