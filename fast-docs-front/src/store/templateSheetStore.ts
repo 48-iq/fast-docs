@@ -33,5 +33,9 @@ export const useTemplateSheetStore = defineStore('templateSheetStore', () => {
   const move = (id: string, x: number, y: number) => {
     blocks.value = blocks.value.map(b => b.id === id ? {...b, x, y} : b)
   }
-  return {blocks, add, remove, resize, move, setTemplateSheetRef, templateSheetRef}
+
+  const update = (newBlock:{id: string, x: number, y: number, width: number, height: number}) => {
+    blocks.value = blocks.value.map(b => b.id === newBlock.id ? {...b, ...newBlock} : b)
+  }
+  return {blocks, add, remove, resize, move, setTemplateSheetRef, templateSheetRef, update}
 })

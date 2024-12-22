@@ -12,8 +12,8 @@ useDraggable(templateBlockRef, {
   initialValue: { x: 0, y: 0 },
   onEnd: ({ x, y }) => {
     const clientRect = templateSheetStore.templateSheetRef?.getBoundingClientRect()
-    const xval = x - clientRect!.left
-    const yval = y - clientRect!.top
+    const xval = Math.round(x - clientRect!.left)
+    const yval = Math.round(y - clientRect!.top)
     templateSheetStore.add({
       id: '1',
       x: xval,

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useOptionsStore } from '@/store/optionsStore';
 import { useDraggable } from '@vueuse/core';
 import { useTemplateRef } from 'vue';
 
@@ -17,20 +18,21 @@ import { useTemplateRef } from 'vue';
 
   const props = defineProps<TemplateBlockInstanceProps>()
 
+  const optionsStore = useOptionsStore();
+
+  const select = () => {
+    optionsStore.setBlock( {...props, value: model.value? model.value : ''} )
+    console.log(model.value)
+  }
+
   const blockInstanceRef = useTemplateRef('block-instance-ref');
   useDraggable(blockInstanceRef, { initialValue: { x: props.x, y: props.y },
     onMove: ({ x, y }) => {
       const clientRect = blockInstanceRef.value?.parentElement?.getBoundingClientRect()
-      const xval = x - clientRect!.left
-      const yval = y - clientRect!.top
+      const xval = Math.round(x - clientRect!.left)
+      const yval = Math.round(y - clientRect!.top)
       emit('move', {id: props.id, x: xval, y:yval});
     },
-    onEnd: ({ x, y }) => {
-      const clientRect = blockInstanceRef.value?.parentElement?.getBoundingClientRect()
-      const xval = x - clientRect!.left
-      const yval = y - clientRect!.top
-      console.log(xval, yval)
-    }
 
   });
 
@@ -39,7 +41,8 @@ import { useTemplateRef } from 'vue';
 <template>
   <div class="template-block-instance"
     ref="block-instance-ref"
-    :style="{ left: props.x + 'px', top: props.y + 'px', width: props.width + 'px', height: props.height + 'px' }">
+    :style="{ left: props.x + 'px', top: props.y + 'px', width: props.width + 'px', height: props.height + 'px' }"
+    @click="select">
 
     <textarea placeholder="Введите текст"
       v-model="model" class="template-block-instance-area">
