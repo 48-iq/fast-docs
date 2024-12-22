@@ -15,7 +15,7 @@ useDraggable(templateBlockRef, {
     const xval = Math.round(x - clientRect!.left)
     const yval = Math.round(y - clientRect!.top)
     templateSheetStore.add({
-      id: '1',
+      id: Math.random().toString(36).substring(7),
       x: xval,
       y: yval,
       width: 120,
