@@ -8,6 +8,19 @@ import lombok.*;
 
 import java.util.List;
 
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
+@Table(name = "template")
 public class Template {
-
+    @Id
+    private String id;
+    private String title;
+    @OneToMany(mappedBy = "document")
+    private List<Document> documents;
+    @OneToMany(mappedBy = "template_blocks")
+    private List<TemplateBlock> blocks;
 }
