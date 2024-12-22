@@ -8,6 +8,7 @@ import { useTemplateRef } from 'vue';
 
   export type TemplateBlockInstanceProps = {
     id: string
+    blockType: string
     x: number
     y: number
     width: number

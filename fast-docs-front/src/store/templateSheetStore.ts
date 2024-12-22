@@ -5,6 +5,7 @@ export type Block = {
   id: string;
   x: number;
   y: number;
+  blockType: string;
   width: number;
   height: number;
   value: string

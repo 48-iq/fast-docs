@@ -4,6 +4,8 @@ import { useDraggable } from '@vueuse/core';
 import { useTemplateRef } from 'vue';
 
 
+const props = defineProps<{blockType: string}>()
+
 const templateSheetStore = useTemplateSheetStore();
 
 const templateBlockRef = useTemplateRef('template-block-ref');
@@ -18,6 +20,7 @@ useDraggable(templateBlockRef, {
       id: Math.random().toString(36).substring(7),
       x: xval,
       y: yval,
+      blockType: props.blockType,
       width: 120,
       height: 80,
       value: ''

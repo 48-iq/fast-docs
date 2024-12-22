@@ -43,7 +43,7 @@ const submit = (e: Event) => {
 
       </div>
       <div class="buttons">
-        <BaseButton>Создать</BaseButton>
+        <BaseButton>Сохранить</BaseButton>
         <BaseButton>Отмена</BaseButton>
       </div>
   </form>
