@@ -1,17 +1,12 @@
 package dev.the_moon_team.fast_docs.controllers;
 
-import dev.the_moon_team.fast_docs.dto.DocumentDto;
 import dev.the_moon_team.fast_docs.dto.TemplateDto;
-import dev.the_moon_team.fast_docs.entities.Document;
 import dev.the_moon_team.fast_docs.entities.Template;
 import dev.the_moon_team.fast_docs.repositories.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,26 +26,29 @@ public class TemplateController {
 
         for (Template document: templates){
             TemplateDto dto = new TemplateDto();
-            dto.id = document.getId();
             dto.title = document.getTitle();
 
             templateDtos.add(dto);
         }
         return new ResponseEntity<>(templateDtos, HttpStatus.OK);
     }
-    @GetMapping("/byid")
-    public ResponseEntity<?> readById(String id){
-        Template template = templateRepository.findById(id).get();
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> readById(@PathVariable String id){
+        try {
+            Template template = templateRepository.findById(id).orElseThrow(() -> new NoSuchElementException("no no such Template"));
 
-        TemplateDto dto = new TemplateDto();
-        dto.id = template.getId();
-        dto.title = template.getTitle();
+            TemplateDto dto = new TemplateDto();
+            dto.title = template.getTitle();
 
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/save") //что-то там
-    public ResponseEntity<?> save(TemplateDto templateDto){
+    public ResponseEntity<?> save(@RequestBody TemplateDto templateDto){
         Template template = new Template();
 
         template.setTitle(templateDto.title);
@@ -59,8 +57,8 @@ public class TemplateController {
         return new ResponseEntity<>(HttpStatus.OK); //что-то там
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<?> update(TemplateDto templateDto, String id){
+    @PostMapping("/update/{id}")
+    public ResponseEntity<?> update(@RequestBody TemplateDto templateDto,@PathVariable String id){
         Template template = templateRepository.findById(id)
                 .map(template1 -> {
                     template1.setTitle(templateDto.title);
@@ -70,13 +68,12 @@ public class TemplateController {
 
 
         TemplateDto dto = new TemplateDto();
-        dto.id = template.getId();
         dto.title = template.getTitle();
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
-    @PostMapping("/delete")
-    public ResponseEntity<?> delete(String id){
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id){
         templateRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK); //что-то там
 

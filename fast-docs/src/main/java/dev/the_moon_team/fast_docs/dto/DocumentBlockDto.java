@@ -11,7 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DocumentBlockDto {
-    public String id;
     public String value;
     public TemplateBlock templateBlock;
     public Document document;

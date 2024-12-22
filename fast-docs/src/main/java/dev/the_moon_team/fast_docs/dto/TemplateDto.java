@@ -8,6 +8,5 @@ import lombok.Setter;
 @Setter
 public class TemplateDto {
 
-    public String id;
     public String title;
 }

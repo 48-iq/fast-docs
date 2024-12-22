@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @Setter
 public class DocumentDto {
-    public String id;
     public String title;
 
     public List<DocumentBlock> documentBlocks;

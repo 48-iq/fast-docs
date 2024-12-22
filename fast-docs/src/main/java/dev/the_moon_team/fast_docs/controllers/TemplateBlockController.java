@@ -10,10 +10,7 @@ import dev.the_moon_team.fast_docs.repositories.TemplateBlockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +30,6 @@ public class TemplateBlockController {
 
         for (TemplateBlock templateBlock: templateBlocks){
             TemplateBlockDto dto = new TemplateBlockDto();
-            dto.id = templateBlock.getId();
             dto.defaultValue = templateBlock.getDefaultValue();
             dto.type = templateBlock.getType();
             dto.template = templateBlock.getTemplate();
@@ -42,21 +38,25 @@ public class TemplateBlockController {
         }
         return new ResponseEntity<>(templateBlockDtos, HttpStatus.OK);
     }
-    @GetMapping("/byid")
-    public ResponseEntity<?> readById(String id){
-        TemplateBlock templateBlock = templateBlockRepository.findById(id).get();
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> readById(@PathVariable String id){
+        try {
+            TemplateBlock templateBlock = templateBlockRepository.findById(id).orElseThrow(() -> new NoSuchElementException("no no such TemplateBlock"));
 
-        TemplateBlockDto dto = new TemplateBlockDto();
-        dto.id = templateBlock.getId();
-        dto.defaultValue = templateBlock.getDefaultValue();
-        dto.type = templateBlock.getType();
-        dto.template = templateBlock.getTemplate();
+            TemplateBlockDto dto = new TemplateBlockDto();
+            dto.defaultValue = templateBlock.getDefaultValue();
+            dto.type = templateBlock.getType();
+            dto.template = templateBlock.getTemplate();
 
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/save") //что-то там
-    public ResponseEntity<?> save(TemplateBlockDto templateBlockDto){
+    public ResponseEntity<?> save(@RequestBody TemplateBlockDto templateBlockDto){
         TemplateBlock templateBlock = new TemplateBlock();
 
 
@@ -68,8 +68,8 @@ public class TemplateBlockController {
         return new ResponseEntity<>(HttpStatus.OK); //что-то там
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<?> update(TemplateBlockDto templateBlockDto, String id){
+    @PostMapping("/update/{id}")
+    public ResponseEntity<?> update(@RequestBody TemplateBlockDto templateBlockDto,@PathVariable String id){
         TemplateBlock templateBlock = templateBlockRepository.findById(id)
                 .map(templateBlock1 -> {
                     templateBlock1.setTemplate(templateBlockDto.template);
@@ -80,15 +80,14 @@ public class TemplateBlockController {
 
 
         TemplateBlockDto dto = new TemplateBlockDto();
-        dto.id = templateBlock.getId();
         dto.template = templateBlock.getTemplate();
         dto.type = templateBlock.getType();
         dto.template = templateBlock.getTemplate();
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
-    @PostMapping("/delete")
-    public ResponseEntity<?> delete(String id){
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id){
         templateBlockRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK); //что-то там
 

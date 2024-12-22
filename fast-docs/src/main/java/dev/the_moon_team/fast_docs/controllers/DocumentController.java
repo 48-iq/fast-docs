@@ -6,10 +6,7 @@ import dev.the_moon_team.fast_docs.repositories.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.print.Doc;
 import java.util.ArrayList;
@@ -30,7 +27,6 @@ public class DocumentController {
 
         for (Document document: documents){
             DocumentDto dto = new DocumentDto();
-            dto.id = document.getId();
             dto.documentBlocks = document.getDocumentBlocks();
             dto.title = document.getTitle();
             dto.template = document.getTemplate();
@@ -39,21 +35,25 @@ public class DocumentController {
         }
         return new ResponseEntity<>(documentDtos, HttpStatus.OK);
     }
-    @GetMapping("/byid")
-    public ResponseEntity<?> readById(String id){
-        Document document = documentRepository.findById(id).get();
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> readById(@PathVariable String id){
+        try {
+            Document document = documentRepository.findById(id).orElseThrow(() -> new NoSuchElementException("no no such Document"));
 
-        DocumentDto dto = new DocumentDto();
-        dto.id = document.getId();
-        dto.documentBlocks = document.getDocumentBlocks();
-        dto.title = document.getTitle();
-        dto.template = document.getTemplate();
+            DocumentDto dto = new DocumentDto();
+            dto.documentBlocks = document.getDocumentBlocks();
+            dto.title = document.getTitle();
+            dto.template = document.getTemplate();
 
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/save") //что-то там
-    public ResponseEntity<?> save(DocumentDto documentDto){
+    public ResponseEntity<?> save(@RequestBody DocumentDto documentDto){
         Document document = new Document();
 
         document.setTitle(documentDto.title);
@@ -64,8 +64,8 @@ public class DocumentController {
         return new ResponseEntity<>(HttpStatus.OK); //что-то там
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<?> update(DocumentDto documentDto, String id){
+    @PostMapping("/update/{id}")
+    public ResponseEntity<?> update(@RequestBody DocumentDto documentDto,@PathVariable String id){
         Document doc = documentRepository.findById(id)
                         .map(document -> {
                             document.setTitle(documentDto.title);
@@ -76,15 +76,14 @@ public class DocumentController {
 
 
         DocumentDto dto = new DocumentDto();
-        dto.id = doc.getId();
         dto.documentBlocks = doc.getDocumentBlocks();
         dto.title = doc.getTitle();
         dto.template = doc.getTemplate();
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
-    @PostMapping("/delete")
-    public ResponseEntity<?> delete(String id){
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id){
         documentRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK); //что-то там
 

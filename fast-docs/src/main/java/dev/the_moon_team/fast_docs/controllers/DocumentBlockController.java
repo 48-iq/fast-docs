@@ -7,10 +7,7 @@ import dev.the_moon_team.fast_docs.repositories.DocumentBlockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +28,6 @@ public class DocumentBlockController {
         for (DocumentBlock documentBlock: documents){
             DocumentBlockDto dto = new DocumentBlockDto();
 
-            dto.id = documentBlock.getId();
             dto.document = documentBlock.getDocument();
             dto.x = documentBlock.getX();
             dto.y = documentBlock.getY();
@@ -44,26 +40,29 @@ public class DocumentBlockController {
         }
         return new ResponseEntity<>(documentBlockDtos, HttpStatus.OK);
     }
-    @GetMapping("/byid")
-    public ResponseEntity<?> readById(String id){
-        DocumentBlock documentBlock = documentBlockRepository.findById(id).get();
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> readById(@PathVariable String id){
+        try {
+            DocumentBlock documentBlock = documentBlockRepository.findById(id).orElseThrow(() -> new NoSuchElementException("no such DocumentBlock"));
+            DocumentBlockDto dto = new DocumentBlockDto();
 
-        DocumentBlockDto dto = new DocumentBlockDto();
+            dto.document = documentBlock.getDocument();
+            dto.x = documentBlock.getX();
+            dto.y = documentBlock.getY();
+            dto.templateBlock = documentBlock.getTemplateBlock();
+            dto.height = documentBlock.getHeight();
+            dto.width = documentBlock.getWidth();
+            dto.value = documentBlock.getValue();
 
-        dto.id = documentBlock.getId();
-        dto.document = documentBlock.getDocument();
-        dto.x = documentBlock.getX();
-        dto.y = documentBlock.getY();
-        dto.templateBlock = documentBlock.getTemplateBlock();
-        dto.height = documentBlock.getHeight();
-        dto.width = documentBlock.getWidth();
-        dto.value = documentBlock.getValue();
-
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/save") //что-то там
-    public ResponseEntity<?> save(DocumentBlockDto documentBlockDto){
+    public ResponseEntity<?> save(@RequestBody DocumentBlockDto documentBlockDto){
         DocumentBlock documentBlock = new DocumentBlock();
 
         documentBlock.setDocument(documentBlockDto.document);
@@ -78,8 +77,8 @@ public class DocumentBlockController {
         return new ResponseEntity<>(HttpStatus.OK); //что-то там
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<?> update(DocumentBlockDto newDocumentBlock, String id){
+    @PostMapping("/update/{id}")
+    public ResponseEntity<?> update(@RequestBody DocumentBlockDto newDocumentBlock,@PathVariable String id){
         DocumentBlock documentBlock = documentBlockRepository.findById(id)
                 .map(documentB -> {
                     documentB.setDocument(newDocumentBlock.document);
@@ -96,7 +95,6 @@ public class DocumentBlockController {
 
         DocumentBlockDto dto = new DocumentBlockDto();
 
-        dto.id = documentBlock.getId();
         dto.document = documentBlock.getDocument();
         dto.x = documentBlock.getX();
         dto.y = documentBlock.getY();
@@ -107,8 +105,8 @@ public class DocumentBlockController {
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
-    @PostMapping("/delete")
-    public ResponseEntity<?> delete(String id){
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable String id){
         documentBlockRepository.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK); //что-то там
 

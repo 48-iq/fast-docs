@@ -10,7 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TemplateBlockDto {
-    public String id;
     public String defaultValue;
     public String type;
 
