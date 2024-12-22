@@ -9,42 +9,59 @@ import TemplateSheet from '@/components/organisms/TemplateSheet.vue';
 
 <template>
   <div class="create-template">
-    <CreateTemplateHeader/>
+    <CreateTemplateHeader />
     <div class="container">
       <div class="template-sheet-container">
-        <TemplateSheet/>
+        <TemplateSheet />
       </div>
 
-      <CreateTemplateOptions/>
+      <CreateTemplateOptions />
     </div>
   </div>
 </template>
 <style scoped>
+.create-template {
+  flex: 1;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100% - 60px);
+}
 
-  .create-template {
-    flex: 1;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: calc(100% - 60px);
-  }
-  .template-sheet-container {
-    display: flex;
-    justify-content: center;
-    padding: 10px;
-    overflow-y: scroll;
-    padding: 30px;
-    flex :1;
-    background-color: var(--color-white);
-  }
-  .container {
-    width: 100%;
-    height: calc(100% - 100px);
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    background-color: var(--color-light-aqua);
+.template-sheet-container {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  overflow-y: scroll;
+  padding: 30px;
+  flex: 1;
+  background-color: var(--color-white);
+}
 
-  }
+.container {
+  width: 100%;
+  height: calc(100% - 100px);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--color-light-aqua);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-aqua);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-dark-aqua);
+}
 </style>
