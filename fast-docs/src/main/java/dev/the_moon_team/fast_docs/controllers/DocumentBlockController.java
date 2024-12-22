@@ -1,7 +1,8 @@
 package dev.the_moon_team.fast_docs.controllers;
 
-import dev.the_moon_team.fast_docs.dto.DocumentBlockDto;
-import dev.the_moon_team.fast_docs.entities.Document;
+import dev.the_moon_team.fast_docs.dto.documentBlock.DocumentBlockAddDto;
+import dev.the_moon_team.fast_docs.dto.documentBlock.DocumentBlockReadDto;
+import dev.the_moon_team.fast_docs.dto.documentBlock.DocumentBlockUpdateDto;
 import dev.the_moon_team.fast_docs.entities.DocumentBlock;
 import dev.the_moon_team.fast_docs.repositories.DocumentBlockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,12 @@ public class DocumentBlockController {
 
     @GetMapping("/all")
     public ResponseEntity<?> read(){
-        List<DocumentBlockDto> documentBlockDtos = new ArrayList<>();
+        List<DocumentBlockReadDto> documentBlockDtos = new ArrayList<>();
 
         List<DocumentBlock> documents = documentBlockRepository.findAll();
 
         for (DocumentBlock documentBlock: documents){
-            DocumentBlockDto dto = new DocumentBlockDto();
+            DocumentBlockReadDto dto = new DocumentBlockReadDto();
 
             dto.document = documentBlock.getDocument();
             dto.x = documentBlock.getX();
@@ -44,7 +45,7 @@ public class DocumentBlockController {
     public ResponseEntity<?> readById(@PathVariable String id){
         try {
             DocumentBlock documentBlock = documentBlockRepository.findById(id).orElseThrow(() -> new NoSuchElementException("no such DocumentBlock"));
-            DocumentBlockDto dto = new DocumentBlockDto();
+            DocumentBlockReadDto dto = new DocumentBlockReadDto();
 
             dto.document = documentBlock.getDocument();
             dto.x = documentBlock.getX();
@@ -62,7 +63,7 @@ public class DocumentBlockController {
     }
 
     @PostMapping("/save") //что-то там
-    public ResponseEntity<?> save(@RequestBody DocumentBlockDto documentBlockDto){
+    public ResponseEntity<?> save(@RequestBody DocumentBlockAddDto documentBlockDto){
         DocumentBlock documentBlock = new DocumentBlock();
 
         documentBlock.setDocument(documentBlockDto.document);
@@ -78,7 +79,7 @@ public class DocumentBlockController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<?> update(@RequestBody DocumentBlockDto newDocumentBlock,@PathVariable String id){
+    public ResponseEntity<?> update(@RequestBody DocumentBlockUpdateDto newDocumentBlock, @PathVariable String id){
         DocumentBlock documentBlock = documentBlockRepository.findById(id)
                 .map(documentB -> {
                     documentB.setDocument(newDocumentBlock.document);
@@ -93,7 +94,7 @@ public class DocumentBlockController {
                 }).orElseThrow(() -> new NoSuchElementException("no such DocumentBlock"));
 
 
-        DocumentBlockDto dto = new DocumentBlockDto();
+        DocumentBlockUpdateDto dto = new DocumentBlockUpdateDto();
 
         dto.document = documentBlock.getDocument();
         dto.x = documentBlock.getX();

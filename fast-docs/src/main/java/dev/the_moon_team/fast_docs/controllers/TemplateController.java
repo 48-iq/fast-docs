@@ -1,6 +1,8 @@
 package dev.the_moon_team.fast_docs.controllers;
 
-import dev.the_moon_team.fast_docs.dto.TemplateDto;
+import dev.the_moon_team.fast_docs.dto.template.TemplateAddDto;
+import dev.the_moon_team.fast_docs.dto.template.TemplateReadDto;
+import dev.the_moon_team.fast_docs.dto.template.TemplateUpdateDto;
 import dev.the_moon_team.fast_docs.entities.Template;
 import dev.the_moon_team.fast_docs.repositories.TemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +22,12 @@ public class TemplateController {
 
     @GetMapping("/all")
     public ResponseEntity<?> read(){
-        List<TemplateDto> templateDtos = new ArrayList<>();
+        List<TemplateReadDto> templateDtos = new ArrayList<>();
 
         List<Template> templates = templateRepository.findAll();
 
         for (Template document: templates){
-            TemplateDto dto = new TemplateDto();
+            TemplateReadDto dto = new TemplateReadDto();
             dto.title = document.getTitle();
 
             templateDtos.add(dto);
@@ -37,7 +39,7 @@ public class TemplateController {
         try {
             Template template = templateRepository.findById(id).orElseThrow(() -> new NoSuchElementException("no no such Template"));
 
-            TemplateDto dto = new TemplateDto();
+            TemplateReadDto dto = new TemplateReadDto();
             dto.title = template.getTitle();
 
             return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -48,7 +50,7 @@ public class TemplateController {
     }
 
     @PostMapping("/save") //что-то там
-    public ResponseEntity<?> save(@RequestBody TemplateDto templateDto){
+    public ResponseEntity<?> save(@RequestBody TemplateAddDto templateDto){
         Template template = new Template();
 
         template.setTitle(templateDto.title);
@@ -58,7 +60,7 @@ public class TemplateController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<?> update(@RequestBody TemplateDto templateDto,@PathVariable String id){
+    public ResponseEntity<?> update(@RequestBody TemplateUpdateDto templateDto, @PathVariable String id){
         Template template = templateRepository.findById(id)
                 .map(template1 -> {
                     template1.setTitle(templateDto.title);
@@ -67,7 +69,7 @@ public class TemplateController {
                 }).orElseThrow(() -> new NoSuchElementException("no such Template"));
 
 
-        TemplateDto dto = new TemplateDto();
+        TemplateUpdateDto dto = new TemplateUpdateDto();
         dto.title = template.getTitle();
 
         return new ResponseEntity<>(dto, HttpStatus.OK);
