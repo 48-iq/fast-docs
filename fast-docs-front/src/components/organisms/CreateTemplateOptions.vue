@@ -18,27 +18,27 @@ const submit = (e: Event) => {
 <template>
   <form class="create-template-options" @submit="submit">
       <div class="input-div">
-        <span>x:</span>
+        <span>X:</span>
         <BaseInput v-model="optionsStore.block.x" class="input" type="number"/>
 
       </div>
       <div class="input-div">
-        <span>y:</span>
+        <span>Y:</span>
         <BaseInput v-model="optionsStore.block.y" class="input" type="number"/>
 
       </div>
       <div class="input-div">
-        <span>ширина:</span>
+        <span>Ширина:</span>
         <BaseInput v-model="optionsStore.block.width" class="input" type="number"/>
 
       </div>
       <div class="input-div">
-        <span>высота:</span>
+        <span>Высота:</span>
         <BaseInput v-model="optionsStore.block.height" class="input" type="number"/>
 
       </div>
       <div class="input-div">
-        <span>значение:</span>
+        <span>Значение:</span>
         <BaseInput v-model="optionsStore.block.value" class="input" type="text"/>
 
       </div>
@@ -54,12 +54,11 @@ const submit = (e: Event) => {
     display: flex;
     flex-direction: column;
     width: 300px;
-    background-color: var(--color-light-aqua);
-    border: var(--color-blue) 3px solid;
+    background-color: var(--color-light-gray);
     gap: 30px;
-    margin-top: 10px;
     padding: 10px;
     padding-top: 30px;
+    color: var(--color-dark-blue);
   }
   .buttons {
     display: flex;
@@ -67,7 +66,11 @@ const submit = (e: Event) => {
   }
 
   .input {
-    width: 200px;
+    width: 180px;
+    border-radius: 5px;
+    border: none;
+    color: var(--color-dark-aqua);
+    padding-left: 5px;
   }
   .input-div {
     display: flex;
