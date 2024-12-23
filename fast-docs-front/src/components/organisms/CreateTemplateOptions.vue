@@ -3,12 +3,27 @@ import { useOptionsStore } from '@/store/optionsStore';
 import BaseButton from '../atoms/BaseButton.vue';
 import BaseInput from '../atoms/BaseInput.vue';
 import { useTemplateSheetStore } from '@/store/templateSheetStore';
+import { useTemplatesStore } from '@/store/templatesStore';
 
 const optionsStore = useOptionsStore()
 const templateSheetStore = useTemplateSheetStore()
+const templatesStore = useTemplatesStore()
 const submit = (e: Event) => {
   e.preventDefault();
   templateSheetStore.update({...optionsStore.block});
+}
+
+const saveTemplate = () => {
+  const templateId = templateSheetStore.id? templateSheetStore.id : Math.random().toString(36).substring(7)
+  templateSheetStore.setId(templateId)
+  const template = {
+    id: templateId,
+    title: templateSheetStore.title,
+    blocks: templateSheetStore.blocks
+  }
+  console.log(templateSheetStore.id)
+  templatesStore.saveTemplate(template)
+
 }
 
 </script>
@@ -17,6 +32,8 @@ const submit = (e: Event) => {
 
 <template>
   <form class="create-template-options" @submit="submit">
+    <div class="inputs">
+
       <div class="input-div">
         <span>X:</span>
         <BaseInput v-model="optionsStore.block.x" class="input" type="number"/>
@@ -37,15 +54,20 @@ const submit = (e: Event) => {
         <BaseInput v-model="optionsStore.block.height" class="input" type="number"/>
 
       </div>
+
+    </div>
+    <div>
       <div class="input-div">
-        <span>Значение:</span>
-        <BaseInput v-model="optionsStore.block.value" class="input" type="text"/>
+        <span>Заголовок:</span>
+        <BaseInput v-model="templateSheetStore.title" class="input" type="text"/>
 
       </div>
       <div class="buttons">
-        <BaseButton>Сохранить</BaseButton>
+        <BaseButton @click="saveTemplate">Сохранить</BaseButton>
         <BaseButton>Отмена</BaseButton>
       </div>
+    </div>
+
   </form>
 </template>
 
@@ -55,13 +77,21 @@ const submit = (e: Event) => {
     flex-direction: column;
     width: 300px;
     background-color: var(--color-light-gray);
-    gap: 30px;
     padding: 10px;
     padding-top: 30px;
+    justify-content: space-between;
     color: var(--color-dark-blue);
   }
+
+  .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
   .buttons {
     display: flex;
+    margin-top: 20px;
     justify-content: space-around;
   }
 

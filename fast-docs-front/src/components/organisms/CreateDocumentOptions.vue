@@ -2,13 +2,34 @@
 import { useOptionsStore } from '@/store/optionsStore';
 import BaseButton from '../atoms/BaseButton.vue';
 import BaseInput from '../atoms/BaseInput.vue';
-import { useTemplateSheetStore } from '@/store/templateSheetStore';
+import { useDocumentSheetStore } from '@/store/documentSheetStore';
+import { useDocumentsStore } from '@/store/documentsStore';
 
-const optionsStore = useOptionsStore()
-const templateSheetStore = useTemplateSheetStore()
+
+const optionsStore = useOptionsStore();
+const documentSheetStore = useDocumentSheetStore()
+const documentsStore = useDocumentsStore()
+
 const submit = (e: Event) => {
   e.preventDefault();
-  templateSheetStore.update({...optionsStore.block});
+  documentSheetStore.updateBlock(optionsStore.block.id, optionsStore.block.value);
+}
+
+
+const saveDocument = () => {
+  const documentId = documentSheetStore.id? documentSheetStore.id : Math.random().toString(36).substring(7)
+  documentSheetStore.setId(documentId)
+  const document = {
+    id: documentId,
+    title: documentSheetStore.title,
+    template: {
+      id: documentSheetStore.templateId,
+      title: documentSheetStore.templateTitle
+    },
+    blocks: documentSheetStore.blocks
+  }
+  documentsStore.createDocument(document)
+
 }
 
 </script>
@@ -17,35 +38,20 @@ const submit = (e: Event) => {
 
 <template>
   <form class="create-template-options" @submit="submit">
-      <div class="input-div">
-        <span>X:</span>
-        <BaseInput v-model="optionsStore.block.x" class="input" type="number"/>
+    <div></div>
 
-      </div>
-      <div class="input-div">
-        <span>Y:</span>
-        <BaseInput v-model="optionsStore.block.y" class="input" type="number"/>
 
-      </div>
+    <div>
       <div class="input-div">
-        <span>Ширина:</span>
-        <BaseInput v-model="optionsStore.block.width" class="input" type="number"/>
-
-      </div>
-      <div class="input-div">
-        <span>Высота:</span>
-        <BaseInput v-model="optionsStore.block.height" class="input" type="number"/>
-
-      </div>
-      <div class="input-div">
-        <span>Значение:</span>
-        <BaseInput v-model="optionsStore.block.value" class="input" type="text"/>
+        <span>Заголовок:</span>
+        <BaseInput v-model="documentSheetStore.title" class="input" type="text"/>
 
       </div>
       <div class="buttons">
-        <BaseButton>Сохранить</BaseButton>
+        <BaseButton @click="saveDocument">Сохранить</BaseButton>
         <BaseButton>Отмена</BaseButton>
       </div>
+    </div>
   </form>
 </template>
 

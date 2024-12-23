@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import EditorView from '../views/EditorView.vue'
 import FixedEditorView from '@/views/FixedEditorView.vue'
-import CreateTemplateView from '@/views/TemplateView.vue'
-import CreateDocumentView from '@/views/CreateDocumentView.vue'
+import TemplateView from '@/views/TemplateView.vue'
+import CreateDocumentView from '@/views/DocumentView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,28 +14,30 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/editor/documents',
+      path: '/e',
       name: 'documents',
       component: EditorView,
     },
     {
-      path: '/editor/templates',
+      path: '/e',
       name: 'templates',
       component: EditorView,
     },
     {
-      path:'/fixed-view',
+      path:'/editor',
       name:'fixed-view',
       component: FixedEditorView,
       children: [
         {
-          path: 'create-template',
+          path: 'templates/:id?',
+          props: true,
           name: 'create-template',
-          component: CreateTemplateView
+          component: TemplateView
         },
         {
-          path: 'create-document',
+          path: 'documents/:templateId/:id?',
           name: 'create-document',
+          props: true,
           component: CreateDocumentView
         }
       ]

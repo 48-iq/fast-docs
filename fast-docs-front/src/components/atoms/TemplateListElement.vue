@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import OptionsPanel from '@/components/atoms/OptionsPanel.vue'
+import { useTemplatesStore } from '@/store/templatesStore'
 import { onClickOutside } from '@vueuse/core'
 import { ref, useTemplateRef } from 'vue'
+import { useRouter } from 'vue-router'
 
 
   export type Template = {
@@ -17,10 +19,13 @@ import { ref, useTemplateRef } from 'vue'
     x: 0,
     y: 0
   })
+  const templatesStore = useTemplatesStore();
 
   const optionsRef = useTemplateRef('options-ref');
 
   const props = defineProps<TemplateListElementProps>();
+
+  const router = useRouter();
 
   const openOptions = (e: MouseEvent) => {
     e.stopPropagation();
@@ -31,21 +36,32 @@ import { ref, useTemplateRef } from 'vue'
 
   onClickOutside(optionsRef, () => optionsParams.value.isOptions = false);
 
+  const deleteTemplate = () => {
+    templatesStore.removeTemplate(props.element.id);
+  }
+
+  const selectTemplate = () => {
+    router.push(`/editor/templates/${props.element.id}`);
+  }
+
+  const createDocument = () => {
+    router.push(`/editor/documents/${props.element.id}`);
+  }
 
 </script>
 
 <template>
   <div >
     <div class="container" >
-      <img class="image" src="@/assets/template-icon.png"/>
+      <img class="image" @click="selectTemplate" src="@/assets/template-icon.png"/>
       <span>{{ props.element.title }}</span>
       <img class="options" @click="openOptions" src="@/assets/3dots.png"/>
     </div>
     <OptionsPanel ref="options-ref"
       v-if="optionsParams.isOptions" :x="optionsParams.x" :y="optionsParams.y">
-      <div @click="console.log('К создать документ')" class="option">Создать документ</div>
-      <div @click="console.log('Редактировать')" class="option">Редактировать</div>
-      <div @click="console.log('Удалить')" class="delete option" :style="{ color: 'red' }">Удалить</div>
+      <div @click="createDocument" class="option">Создать документ</div>
+      <div @click="selectTemplate" class="option">Редактировать</div>
+      <div @click="deleteTemplate" class="delete option" :style="{ color: 'red' }">Удалить</div>
     </OptionsPanel>
   </div>
 </template>

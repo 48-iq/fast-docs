@@ -24,7 +24,6 @@ export const useOptionsStore = defineStore('optionsStore', () => {
 
   const setBlock = (newBlock: Block ) => {
     block.value = newBlock;
-    console.log(block.value);
   }
   const getX = () => block.value?.x || 0;
   const getY = () => block.value?.y || 0;

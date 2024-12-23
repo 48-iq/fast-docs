@@ -1,6 +1,12 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 
+export type Template = {
+  id: string;
+  title: string;
+  blocks: Block[]
+}
+
 export type Block = {
   id: string;
   x: number;
@@ -12,10 +18,26 @@ export type Block = {
 }
 
 export const useTemplateSheetStore = defineStore('templateSheetStore', () => {
+  const id = ref('')
+  const title = ref('')
   const blocks = ref<Block[]>([])
+
+  const setTemplate = (template: Template) => {
+    id.value = template.id;
+    title.value = template.title;
+    blocks.value = template.blocks
+  }
 
   const add = (block: Block) => {
     blocks.value.push(block)
+  }
+
+  const setId = (newId: string) => {
+    id.value = newId;
+  }
+
+  const setTitle = (newTitle: string) => {
+    title.value = newTitle;
   }
 
   const templateSheetRef = ref<HTMLDivElement | null>(null)
@@ -38,5 +60,5 @@ export const useTemplateSheetStore = defineStore('templateSheetStore', () => {
   const update = (newBlock:{id: string, x: number, y: number, width: number, height: number}) => {
     blocks.value = blocks.value.map(b => b.id === newBlock.id ? {...b, ...newBlock} : b)
   }
-  return {blocks, add, remove, resize, move, setTemplateSheetRef, templateSheetRef, update}
+  return {blocks, add, remove, resize, move, setTemplateSheetRef, templateSheetRef, update, id, title, setId, setTitle, setTemplate}
 })

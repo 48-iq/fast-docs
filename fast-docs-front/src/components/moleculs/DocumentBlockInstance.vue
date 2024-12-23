@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { useOptionsStore } from '@/store/optionsStore';
-import { useDraggable } from '@vueuse/core';
-import { useTemplateRef } from 'vue';
 
 
   const model = defineModel<string>()
 
-  export type TemplateBlockInstanceProps = {
+  export type DocumentBlockInstanceProps = {
     id: string
     blockType: string
     x: number
@@ -15,27 +13,18 @@ import { useTemplateRef } from 'vue';
     height: number
   }
 
-  const emit = defineEmits(['move'])
 
-  const props = defineProps<TemplateBlockInstanceProps>()
+
+  const props = defineProps<DocumentBlockInstanceProps>()
 
   const optionsStore = useOptionsStore();
 
   const select = () => {
     optionsStore.setBlock( {...props, value: model.value? model.value : ''} )
-    console.log(props.id)
+    console.log(model.value)
   }
 
-  const blockInstanceRef = useTemplateRef('block-instance-ref');
-  useDraggable(blockInstanceRef, { initialValue: { x: props.x, y: props.y },
-    onMove: ({ x, y }) => {
-      const clientRect = blockInstanceRef.value?.parentElement?.getBoundingClientRect()
-      const xval = Math.round(x - clientRect!.left)
-      const yval = Math.round(y - clientRect!.top)
-      emit('move', {id: props.id, x: xval, y:yval});
-    },
 
-  });
 
 </script>
 

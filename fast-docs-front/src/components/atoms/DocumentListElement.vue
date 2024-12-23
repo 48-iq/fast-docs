@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import OptionsPanel from '@/components/atoms/OptionsPanel.vue'
+import { useDocumentsStore } from '@/store/documentsStore'
 import { onClickOutside } from '@vueuse/core'
 import { ref, useTemplateRef } from 'vue'
+import { useRouter } from 'vue-router'
 
 
   export type Template = {
@@ -37,6 +39,21 @@ import { ref, useTemplateRef } from 'vue'
 
   onClickOutside(optionsRef, () => optionsParams.value.isOptions = false);
 
+  const documentsStore = useDocumentsStore();
+
+  const router = useRouter();
+
+  const deleteDocument = () => {
+    documentsStore.removeDocument(props.element.id);
+  }
+
+  const selectDocument = () => {
+    router.push(`/editor/documents/${props.element.template.id}/${props.element.id}`);
+  }
+
+  const selectTemplate = () => {
+    router.push(`/editor/templates/${props.element.template.id}`);
+  }
 
 </script>
 
@@ -49,9 +66,9 @@ import { ref, useTemplateRef } from 'vue'
     </div>
     <OptionsPanel ref="options-ref"
       v-if="optionsParams.isOptions" :x="optionsParams.x" :y="optionsParams.y">
-      <div @click="console.log('К шаблону')" class="option">К шаблону</div>
-      <div @click="console.log('Редактировать')" class="option">Редактировать</div>
-      <div @click="console.log('Удалить')" class="delete option" :style="{ color: 'red' }">Удалить</div>
+      <div @click="selectTemplate" class="option">К шаблону</div>
+      <div @click="selectDocument" class="option">Редактировать</div>
+      <div @click="deleteDocument" class="delete option" :style="{ color: 'red' }">Удалить</div>
     </OptionsPanel>
   </div>
 </template>
